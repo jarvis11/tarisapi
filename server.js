@@ -111,6 +111,9 @@ router.route('/venues/:venue_id')
 		});
 	})
 
+
+	//THIS SHOULD BE DEPRECIATED
+
 	//Register an address with a venue
 	//Accessed at: POST http://localhost:8080/api/venues/:venue_id
 	.post(function(req, res) {
@@ -181,7 +184,8 @@ router.route('/venues/:venue_id/addresses')
 
 
 router.route('/venues/:venue_id/addresses/:address_id')
-
+	//Find a specific address belonging to a specific venue
+	//Accessed at: GET http://localhost:8080/api/venues/:venue_id/addresses/:address_id
 	.get(function(req, res) {
 		Venue.findById(req.params.venue_id, function(err, venue) {
 			if (err)
@@ -210,6 +214,7 @@ router.route('/venues/:venue_id/addresses/:address_id/microlocations')
 
 
 	//Assign a new microlocation to an address
+	//Accessed at: POST http://localhost:8080/api/venues/:venue_id/addresses/:address_id/microlocations
 	.post(function(req,res){
 
 		Venue.findById(req.params.venue_id, function(err, venue){
