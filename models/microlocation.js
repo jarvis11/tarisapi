@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var MicrolocationSchema = new Schema({
+	
 	uuid: String,
 	major_id: Number,
 	minor_id: Number,

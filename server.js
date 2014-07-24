@@ -23,9 +23,13 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1/tarisapi_1'); //Connects to our database
 
 //Enable our models
-//var Venue = require('./models/venue');
+var Venue = require('./models/venue');
+
 var Address = require('./models/address');
 var Microlocation = require('./models/microlocation');
+
+
+
 //ROUTES FOR API
 // ===============================================================================================
 
@@ -46,117 +50,269 @@ router.get('/', function(req, res) {
 });
 
 //additional routes go here
-router.route('/addresses')
+router.route('/venues')
 
-	//Create a venue (accessed at POST http://localhost:8080/api/addresses)
-	.post(function(req, res) {
-
-		//var venue = new Venue();
-		var address = new Address();
-		var microlocation = new Microlocation();
-		//venue.name = req.body.name;
-		//venue.addresses.push()
-		address.street = req.body.street;
-		address.city = req.body.city;
-		address.state = req.body.state;
-		address.zip = req.body.zip;
-		
-		// microlocation.uuid = req.body.uuid;
-		// microlocation.major_id = req.body.major_id;
-		// microlocation.minor_id = req.body.minor_id;
-		// microlocation.descriptor_tag = req.body.descriptor_tag;
-		// microlocation.action_tag = req.body.action_tag;
-		// microlocation.price_tag = req.body.price_tag;
-
-
-		// address.microlocations.push(microlocation);
-
-		address.save(function(err) {
-			if (err)
+	//get all Venues with their respective Addresses and Microlocations
+	//Accessed at: GET http://localhost:8080/api/venues
+	.get(function(req, res){
+		Venue.find(function(err, venues){
+			if(err)
 				res.send(err);
-
-			res.json({ message: 'Address created!' });
+			res.json(venues);
 		});
-
-
 	})
 
-		// get all Addresses with their respective Microlocations (accessed at GET http://localhost:8080/api/addresses)
-	.get(function(req, res) {
-		Address.find(function(err, addresses) {
-			if (err)
-				res.send(err);
+	//Register a venue into Taris
+	//Accessed at: POST http://localhost:8080/api/venues)
+	.post(function(req,res){
 
-			res.json(addresses);
+		var venue = new Venue();
+		venue.name = req.body.name;
+
+		venue.save(function(err){
+			if(err)
+				res.send(err);
+			res.json({message: 'You have registered a venue!'});
 		});
 	});
 
 
-router.route('/addresses/:address_id')
+router.route('/venues/:venue_id')
 
-	//Post a new microlocation
-	.post(function(req, res) {
+	//Get a venue with specific venue_id :venue_id
+	//Accessed at: GET http://localhost:8080/api/venues/:venue_id
+	.get(function(req, res) {
+		Venue.findById(req.params.venue_id, function(err, venue) {
+			if (err)
+				res.send(err);
+			res.json(venue);
+		});
+	})
 
-		Address.findById(req.params.address_id, function(err, address) {
+	//Update a venue's credentials
+	//Accessed at: PUT http://localhost:8080/api/venues/:venue_id
+	.put(function(req, res) {
+
+		//Find the venue we want
+		Venue.findById(req.params.venue_id, function(err, venue) {
 
 			if (err)
 				res.send(err);
 
-			var microlocation_new = new Microlocation();
-			microlocation_new.uuid = req.body.uuid;
-			microlocation_new.major_id = req.body.major_id;
-			microlocation_new.minor_id = req.body.minor_id;
-			microlocation_new.descriptor_tag = req.body.descriptor_tag;
-			microlocation_new.action_tag = req.body.action_tag;
-			microlocation_new.price_tag = req.body.price_tag;
-			address.microlocations.push(microlocation_new);
+			venue.name = req.body.name; 	
 
-			address.save(function(err) {
+			//save the Venue
+			venue.save(function(err) {
 				if (err)
 					res.send(err);
-
-				res.json({ message: 'Microlocation created!' });
+				res.json({message: 'Venue has been updated.'});
 			});
 
 		});
-
 	})
 
+	//Register an address with a venue
+	//Accessed at: POST http://localhost:8080/api/venues/:venue_id
+	.post(function(req, res) {
 
-	//get address with ObjectID id (GET http://localhost/api/addresses/:address_id)
-	.get(function(req, res) {
-		Address.findById(req.params.address_id, function(err, address) {
-			if (err)
-				res.send(err);
-			res.json(address);
-		});
-	})
-
-	//update address with ObjectID id (PUT http://localhost/api/addresses/:address_id)
-	.put(function(req, res) {
-
-		// use our address model to find the address we want
-		Address.findById(req.params.address_id, function(err, address) {
+		Venue.findById(req.params.venue_id, function(err, venue) {
 
 			if (err)
 				res.send(err);
 
-			address.street = req.body.street; 	// update the Addresses info
+			var address = new Address();
+			address.street = req.body.street;
 			address.city = req.body.city;
 			address.state = req.body.state;
 			address.zip = req.body.zip;
 
+			venue.addresses.push(address);
 
-			// save the Address
-			address.save(function(err) {
+			venue.save(function(err) {
 				if (err)
 					res.send(err);
-
-				res.json({ message: 'Address updated!' });
+				res.json({ message: 'You have added an address to this venue.' });
 			});
 
 		});
+
 	});
+
+router.route('/venues/:venue_id/addresses')	
+	
+	//Find all addresses for a single venue
+	//Accessed at: GET http://localhost:8080/api/venues/:venue_id/addresses
+	.get(function(req, res) {
+		Venue.findById(req.params.venue_id, function(err, venue) {
+			if (err)
+				res.send(err);
+			res.json(venue.addresses);
+		});
+	})
+
+	//INCLUDE A PUT TO UPDATE AN ADDRESS HERE
+
+	//Alternative route to post an addresses for a venue
+	//Accessed at: POST http://localhost:8080/api/venues/:venue_id/addresses
+	.post(function(req, res) {
+
+		Venue.findById(req.params.venue_id, function(err, venue) {
+
+			if (err)
+				res.send(err);
+
+			var address = new Address();
+			address.street = req.body.street;
+			address.city = req.body.city;
+			address.state = req.body.state;
+			address.zip = req.body.zip;
+
+			venue.addresses.push(address);
+
+			venue.save(function(err) {
+				if (err)
+					res.send(err);
+				res.json({ message: 'You have added an address to this venue.' });
+			});
+
+		});
+
+	});
+
+
+router.route('/venues/:venue_id/addresses/:address_id')
+
+	.get(function(req, res) {
+		Venue.findById(req.params.venue_id, function(err, venue) {
+			if (err)
+				res.send(err);
+			
+				res.json(venue.addresses.id(req.params.address_id));
+
+			});
+
+	});
+
+
+router.route('/venues/:venue_id/addresses/:address_id/microlocations')
+	
+	//Get all microlocations within embedded within an address
+	//Accessed at: GET http://localhost:8080/api/venues/:venue_id/addresses/:address_id/microlocations
+	.get(function(req, res){
+		Venue.findById(req.params.venue_id, function(err, venue){
+			if(err)
+				res.send(err);
+			address = venue.addresses.id(req.params.address_id);
+			res.json(address.microlocations);
+
+		});
+	})
+
+
+	//Assign a new microlocation to an address
+	.post(function(req,res){
+
+		Venue.findById(req.params.venue_id, function(err, venue){
+			if(err)
+				res.send(err);
+
+			//find the address you want to update
+			address = venue.addresses.id(req.params.address_id);
+
+			//create your microlocation
+			var microlocation = new Microlocation();
+			microlocation.uuid = req.body.uuid;
+			microlocation.major_id = req.body.major_id;
+			microlocation.minor_id = req.body.minor_id;
+			microlocation.descriptor_tag = req.body.descriptor_tag;
+			microlocation.action_tag = req.body.action_tag;
+			microlocation.price_tag = req.body.price_tag;
+
+			address.microlocations.push(microlocation);
+
+			//save your entire venue object
+			venue.save(function(err) {
+				if (err)
+					res.send(err);
+				res.json({ message: 'You have added a microlocation to this address.' });
+			});
+		});
+
+
+	});
+
+router.route('/venues/:venue_id/addresses/:address_id/microlocations/:microlocation_id')
+
+	//Get a single microlocation embedded within an address
+	//Accessed at: GET http://localhost:8080/api/venues/:venue_id/addresses/:address_id/microlocations/:microlocation_id
+	.get(function(req, res){
+		//First find your venue
+		Venue.findById(req.params.venue_id, function(err, venue){
+			if(err)
+				res.send(err);
+
+			//Next find your address
+			address = venue.addresses.id(req.params.address_id);
+
+			microlocation = address.microlocations.id(req.params.microlocation_id);
+			//Return appropriate microlocation
+
+			res.json(microlocation);
+
+		});
+	});
+
+router.route('/addresses')
+
+	//get all Addresses in a collection of venues 
+	//Accessed at: GET http://localhost:8080/api/addresses
+	.get(function(req, res){
+		Venue.find(function(err, venues){
+			if(err)
+				res.send(err);
+			for(var i = 0; i < venues.length; i++){
+				res.json(venues[i].addresses);
+			}
+
+			res.json({message: 'Returned all addresses'});
+		});
+	});
+
+router.route('/microlocations')
+
+	//get all Microlocations in a collection of venues 
+	//Accessed at: GET http://localhost:8080/api/microlocations
+	.get(function(req, res){
+		Venue.find(function(err, venues){
+			if(err)
+				res.send(err);
+
+			//var address_array = [];
+			var microlocations_array = [];
+
+			//Parse through all venues to find addresses
+			for(var i = 0; i < venues.length; i++){
+			    var address_array = venues[i].addresses;
+			    for (var j = 0; j < address_array.length; j++){
+
+			    	microlocations_array.push(address_array[j].microlocations);
+					//res.json(address_array[j].microlocations);
+				//Parse through each address object to find microlocations
+				// for(var j = 0; j < address_array.length; j++){
+				// 	res.json(address_array[j].microlocations);
+				// }
+				//res.json(venues[i].addresses);
+			    }
+			}
+
+			res.json(microlocations_array);
+		});
+	});
+
+
+
+
+
 
 
 
