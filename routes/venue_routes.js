@@ -7,12 +7,12 @@ var Venue = require('../models/venue');
 var Address = require('../models/address');
 var Microlocation = require('../models/microlocation');
 
-// middleware to use for all requests
-router.use(function(req, res, next) {
-	// do logging
-	console.log('Dealing with Venues.');
-	next(); // make sure we go to the next routes and don't stop here
-});
+// // middleware to use for all requests
+// router.use(function(req, res, next) {
+// 	// do logging
+// 	console.log('Dealing with Venues.');
+// 	next(); // make sure we go to the next routes and don't stop here
+// });
 
 /*=============================================================================================
 

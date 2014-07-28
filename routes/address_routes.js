@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Venue = require('../models/venue');
 
+
 router.route('/addresses')
 
 	//get all Addresses in a collection of venues 
