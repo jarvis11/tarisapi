@@ -3,9 +3,9 @@ var express = require('express');
 var router = express.Router();
 
 //import necessary models
-var Venue = require('../models/venue');
-var Address = require('../models/address');
-var Microlocation = require('../models/microlocation');
+var Venue = require('../models/venue_document/venue');
+var Address = require('../models/venue_document/address');
+var Microlocation = require('../models/venue_document/microlocation');
 
 // // middleware to use for all requests
 // router.use(function(req, res, next) {

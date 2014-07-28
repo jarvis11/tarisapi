@@ -23,10 +23,10 @@ var port = process.env.PORT || 8080;
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1/tarisapi_1'); //Connects to our database
 
-//Enable our models
-var Venue = require('./models/venue');
-var Address = require('./models/address');
-var Microlocation = require('./models/microlocation');
+// //Enable our models
+// var Venue = require('./models/venue');
+// var Address = require('./models/address');
+// var Microlocation = require('./models/microlocation');
 
 //Enable our routes
 var venue_routes = require('./routes/venue_routes');

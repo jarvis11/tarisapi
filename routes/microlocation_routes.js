@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var Venue = require('../models/venue');
+var Venue = require('../models/venue_document/venue');
 
 router.route('/microlocations')
 
