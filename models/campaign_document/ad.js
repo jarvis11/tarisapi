@@ -1,15 +1,14 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-// var TargetSchema = require('./target');
-//var BidSchema = require('./bid');
 
 var AdSchema = new Schema({
 	
-	type: String,
+	type: {type: String, required: true},
 	time: {type: Date, default: Date.now},
+	status: {type: Boolean, default: true},
 	bid: {
-		bidtype: String, 
-		amount: Number
+		bidtype: {type: String, required: true}, 
+		amount: {type: Number, default: 5}
 	},
 	target: {
 		venue_name: String,
@@ -21,8 +20,7 @@ var AdSchema = new Schema({
 		microlocation_action_tag: [String],
 		microlocation_price_tag: [String]
 	}
-	//bid: BidSchema.schema,
-	//target: TargetSchema.schema
+	
 	
 });
 
