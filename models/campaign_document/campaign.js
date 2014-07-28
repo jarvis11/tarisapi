@@ -7,7 +7,7 @@ var CampaignSchema = new Schema({
 	name: String,
 	time: {type: Date, default: Date.now},
 	status: {type: Boolean, default: true},
-	type: String,
+	type: {type: String, required: true},
 	budget: Number,
 	ads: [AdSchema.schema]
 
