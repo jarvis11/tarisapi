@@ -20,12 +20,7 @@ router.route('/microlocations')
 			    for (var j = 0; j < address_array.length; j++){
 
 			    	microlocations_array.push(address_array[j].microlocations);
-					//res.json(address_array[j].microlocations);
-				//Parse through each address object to find microlocations
-				// for(var j = 0; j < address_array.length; j++){
-				// 	res.json(address_array[j].microlocations);
-				// }
-				//res.json(venues[i].addresses);
+				
 			    }
 			}
 
