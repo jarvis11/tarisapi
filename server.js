@@ -33,6 +33,7 @@ var venue_routes = require('./routes/venue_routes');
 var address_routes = require('./routes/address_routes');
 var microlocation_routes = require('./routes/microlocation_routes');
 var campaign_routes = require('./routes/campaign_routes');
+var mediabuyer_routes = require('./routes/mediabuyer_routes');
 
 
 
@@ -45,6 +46,7 @@ app.use('/api', venue_routes);
 app.use('/api', address_routes);
 app.use('/api', microlocation_routes);
 app.use('/api', campaign_routes);
+app.use('/api', mediabuyer_routes);
 
 // START SERVER
 // ===============================================================================================
