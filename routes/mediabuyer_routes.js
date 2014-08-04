@@ -44,10 +44,14 @@ router.route('/mediabuyers')
 
 		//save our new mediabuyer
 		mediabuyer.save(function(err){
-			if(err)
+			if(err){
 				res.send(err);
-			console.log('adding a new mediabuyer');
-			res.json({message: 'You have created a mediabuyer!'});
+			} else{
+				console.log('adding a new mediabuyer');
+				res.json({message: 'You have created a mediabuyer!'});
+
+			}
+			
 		});
 	});
 
@@ -81,10 +85,12 @@ router.route('/mediabuyers/:mediabuyer_id')
 
 			//save the Mediabuyer
 			mediabuyer.save(function(err) {
-				if (err)
+				if (err){
 					res.send(err);
-				console.log('updating a specific mediabuyer');
-				res.json({message: 'Mediabuyer has been updated.'});
+				} else {
+					console.log('updating a specific mediabuyer');
+					res.json({message: 'Mediabuyer has been updated.'});
+				}
 			});
 
 		});
@@ -220,10 +226,15 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id')
 			//because mediabuyer has already pushed campaign, we only need to save the campaign in question!
 
 			campaign.save(function(err) {
-				if (err)
+				if (err){
 					res.send(err);
-				console.log('updating a specific campaign');
-				res.json({message: 'Campaign has been updated.'});
+				} else{
+
+					console.log('updating a specific campaign');
+					res.json({message: 'Campaign has been updated.'});
+
+				}
+				
 			});
 
 		});
@@ -293,10 +304,15 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads')
 			//because mediabuyer has already pushed campaign, we only need to save the campaign in question!
 
 			campaign.save(function(err) {
-				if (err)
+				if (err){
 					res.send(err);
-				console.log('adding a new ad to this campaign');
-				res.json({message: 'Added a new ad to this campaign.'});
+					console.log('error creating ad');
+				} else {
+
+					console.log('adding a new ad to this campaign');
+					res.json({message: 'Added a new ad to this campaign.'});
+				}
+				
 			});
 
 		});
@@ -316,12 +332,12 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads/:ad_id')
 
 			if(err)
 				res.send(err);
-			//return campaign with specific id
-			console.log('getting ad with id ' + req.params.ad_id);
-
+			
 			//store our campaign
 			campaign = mediabuyer.campaigns[0];
 
+			//return campaign with specific id
+			console.log('getting ad with id ' + req.params.ad_id);
 			res.json(campaign.ads.id(req.params.ad_id));
 		});
 	})
