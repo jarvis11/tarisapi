@@ -34,7 +34,7 @@ var address_routes = require('./routes/address_routes');
 var microlocation_routes = require('./routes/microlocation_routes');
 //var campaign_routes = require('./routes/campaign_routes');		CAMPAIGN ROUTES DISABLED: SECURITY VULNERABILITY
 var mediabuyer_routes = require('./routes/mediabuyer_routes');
-
+var tag_routes = require('./routes/tag_routes');
 
 
 
@@ -47,7 +47,7 @@ app.use('/api', address_routes);
 app.use('/api', microlocation_routes);
 //app.use('/api', campaign_routes);			CAMPAIGN ROUTES DISABLED: SECURITY VULNERABILITY
 app.use('/api', mediabuyer_routes);
-
+app.use('/api', tag_routes);
 // START SERVER
 // ===============================================================================================
 
