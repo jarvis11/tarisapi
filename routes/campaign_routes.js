@@ -1,3 +1,22 @@
+/*=============================================================================================
+
+
+
+
+
+DEPRECIATED
+
+Access to campaigns is now routed through media buyers for administrative purposes. 
+
+All routes can now be found in mediabuyer_routes.js
+
+
+
+
+
+
+=============================================================================================*/
+
 //initialize Express router
 var express = require('express');
 var router = express.Router();

@@ -63,10 +63,13 @@ router.route('/mediabuyers/:mediabuyer_id')
 	//Accessed at: GET http://localhost:8080/api/mediabuyers/:mediabuyer_id
 	.get(function(req, res) {
 		Mediabuyer.findById(req.params.mediabuyer_id, function(err, mediabuyer) {
-			if (err)
+			if (err){
 				res.send(err);
-			console.log('getting a specific mediabuyer');
-			res.json(mediabuyer);
+			} else{
+				console.log('getting a specific mediabuyer');
+				res.json(mediabuyer);
+			}
+			
 		});
 	})
 
@@ -108,6 +111,7 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns')
 			if(err)
 				res.send(err);
 			//return an array of populated campaigns
+			console.log('getting all campaigns belonging to mediabuyer ' + req.params.mediabuyer_id);
 			res.json(mediabuyer.campaigns);
 		});
 	})
@@ -189,16 +193,21 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id')
 
 		}).exec(function(err, mediabuyer){
 
-			if(err)
+			if(err){
 				res.send(err);
+				console.log("Not a valid campaign id");
+			} else {
 
-			//return campaign with specific id
-			console.log('getting campaign with id ' + req.params.campaign_id);
+				//return campaign with specific id
+				console.log('getting campaign with id ' + req.params.campaign_id);
 
-			//because populate returns an array, we mucst return the single campaign object within that array
-			//res.json(mediabuyer.campaigns.id(req.params.campaign_id));
-			campaign = mediabuyer.campaigns[0];
-			res.json(campaign);
+				//because populate returns an array, we mucst return the single campaign object within that array
+				//res.json(mediabuyer.campaigns.id(req.params.campaign_id));
+				campaign = mediabuyer.campaigns[0];
+				res.json(campaign);
+
+			}
+			
 		});
 	})
 
@@ -330,15 +339,23 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads/:ad_id')
 
 		}).exec(function(err, mediabuyer){
 
-			if(err)
+			//THIS IF IS NOT NEEDED AS THE POPULATION ONLY PERTAINS TO CAMPAIGNS
+			if(err){
 				res.send(err);
-			
-			//store our campaign
-			campaign = mediabuyer.campaigns[0];
+				console.log("Not a valid ad id");
+			} else {
 
-			//return campaign with specific id
-			console.log('getting ad with id ' + req.params.ad_id);
-			res.json(campaign.ads.id(req.params.ad_id));
+				//store our campaign
+				campaign = mediabuyer.campaigns[0];
+
+				//return campaign with specific id
+				console.log('getting ad with id ' + req.params.ad_id);
+				res.json(campaign.ads.id(req.params.ad_id));
+
+
+			}
+			
+			
 		});
 	})
 
