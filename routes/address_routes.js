@@ -1,3 +1,22 @@
+/*=============================================================================================
+
+
+
+
+
+DEPRECIATED
+
+Addresses are already queried with venues. There is no need to query addresses any longer.
+
+
+
+
+
+
+
+=============================================================================================*/
+
+
 var express = require('express');
 var router = express.Router();
 var Venue = require('../models/venue_document/venue');

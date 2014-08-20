@@ -1,3 +1,21 @@
+/*=============================================================================================
+
+
+
+
+
+DEPRECIATED
+
+All computational processes have been migrated over to a seperate Java server for increased performance.
+
+
+
+
+
+
+
+=============================================================================================*/
+
 var express = require('express');
 var router = express.Router();
 

@@ -4,7 +4,7 @@ var AddressSchema = require('./address')
 
 var VenueSchema = new Schema({
 
-	name: String,
+	name: {type: String, required: true},
 	addresses: [AddressSchema.schema]
 });
 

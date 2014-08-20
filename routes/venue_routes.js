@@ -39,13 +39,18 @@ router.route('/venues')
 	.post(function(req,res){
 
 		var venue = new Venue();
+		//Input variables needed to create venue
 		venue.name = req.body.name;
 
 		venue.save(function(err){
-			if(err)
+			if(err){
 				res.send(err);
-			console.log('adding a new venue');
-			res.json({message: 'You have registered a venue!'});
+				res.json({message: 'Error. Check your parameters.'});
+			} else{
+				console.log('adding a new venue');
+				res.json({message: 'You have registered a venue!'});
+			}
+			
 		});
 	});
 
