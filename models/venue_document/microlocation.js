@@ -3,12 +3,12 @@ var Schema = mongoose.Schema;
 
 var MicrolocationSchema = new Schema({
 	
-	uuid: String,
-	major_id: Number,
-	minor_id: Number,
+	uuid: {type: String, required: true},
+	major_id: {type: Number, required: true},
+	minor_id: {type: Number, required: true},
 	descriptor_tag: [String],
 	action_tag: [String],
-	price_tag: [String]
+	price_tag: String
 });
 
 module.exports = mongoose.model('Microlocation', MicrolocationSchema);
