@@ -45,6 +45,7 @@ router.route('/mediabuyers')
 		//save our new mediabuyer
 		mediabuyer.save(function(err){
 			if(err){
+				console.log('error saving mediabuyer -- invalid parameters');
 				res.send(err);
 			} else{
 				console.log('adding a new mediabuyer');
@@ -64,9 +65,10 @@ router.route('/mediabuyers/:mediabuyer_id')
 	.get(function(req, res) {
 		Mediabuyer.findById(req.params.mediabuyer_id, function(err, mediabuyer) {
 			if (err){
+				console.log('error getting mediabuyer -- invalid id')
 				res.send(err);
 			} else{
-				console.log('getting a specific mediabuyer');
+				console.log('getting mediabuyer with id ' + req.params.mediabuyer_id);
 				res.json(mediabuyer);
 			}
 			
@@ -193,20 +195,31 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id')
 
 		}).exec(function(err, mediabuyer){
 
+			var campaign = mediabuyer.campaigns[0];
 			if(err){
 				res.send(err);
 				console.log("Not a valid campaign id");
-			} else {
+			} else if(campaign == undefined){
+				console.log('ERROR');
+				res.json({message: 'error: invalid campaign id'});
 
-				//return campaign with specific id
-				console.log('getting campaign with id ' + req.params.campaign_id);
-
-				//because populate returns an array, we mucst return the single campaign object within that array
-				//res.json(mediabuyer.campaigns.id(req.params.campaign_id));
-				campaign = mediabuyer.campaigns[0];
+			} else{
 				res.json(campaign);
-
 			}
+			// if(err){
+			// 	res.send(err);
+			// 	console.log("Not a valid campaign id");
+			// } else {
+
+			// 	//return campaign with specific id
+			// 	console.log('getting campaign with id ' + req.params.campaign_id);
+
+			// 	//because populate returns an array, we mucst return the single campaign object within that array
+			// 	//res.json(mediabuyer.campaigns.id(req.params.campaign_id));
+			// 	campaign = mediabuyer.campaigns[0];
+			// 	res.json(campaign);
+
+			// }
 			
 		});
 	})
