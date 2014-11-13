@@ -126,19 +126,19 @@ router.route('/pricetags')
 			    }
 			}
 
-			//array clean up
-			var final_price_tags = [];
-			for(x = 0; x < price_tags_array.length; x++){
-				for(y = 0; y < price_tags_array[x].length; y++){
-					//create flattened array
-					final_price_tags.push(price_tags_array[x][y]);
-				}
+			// //array clean up
+			// var final_price_tags = [];
+			// for(x = 0; x < price_tags_array.length; x++){
+			// 	for(y = 0; y < price_tags_array[x].length; y++){
+			// 		//create flattened array
+			// 		final_price_tags.push(price_tags_array[x][y]);
+			// 	}
 
-			}
+			// }
 
  			 var uniqueArray = [];
 
- 			  final_price_tags.forEach(function(value) {
+ 			  price_tags_array.forEach(function(value) {
  			  	if (uniqueArray.indexOf(value) == -1) {
                		 uniqueArray.push(value);
            		 }

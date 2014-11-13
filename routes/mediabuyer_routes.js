@@ -19,7 +19,7 @@ ROUTES GO HERE
 //high level mediabuyer routes (GET, POST)
 router.route('/mediabuyers')
 
-	//get all mediabuyers
+	//Query all mediabuyers
 	//Accessed at: GET http://localhost:8080/api/mediabuyers
 	.get(function(req, res){
 
@@ -35,7 +35,7 @@ router.route('/mediabuyers')
 	})
 
 	//Add a new mediabuyer to an account
-	//Accessed at: POST http://localhost:8080/api/mediabuyers)
+	//Accessed at: POST http://localhost:8080/api/mediabuyers
 	.post(function(req,res){
 
 		//create a new media buyer
@@ -44,6 +44,8 @@ router.route('/mediabuyers')
 
 		//save our new mediabuyer
 		mediabuyer.save(function(err){
+
+			//ensure parameters are valid
 			if(err){
 				console.log('error saving mediabuyer -- invalid parameters');
 				res.send(err);
@@ -64,6 +66,8 @@ router.route('/mediabuyers/:mediabuyer_id')
 	//Accessed at: GET http://localhost:8080/api/mediabuyers/:mediabuyer_id
 	.get(function(req, res) {
 		Mediabuyer.findById(req.params.mediabuyer_id, function(err, mediabuyer) {
+
+			//ensure id is valid
 			if (err){
 				console.log('error getting mediabuyer -- invalid id');
 				res.send(err);
@@ -82,6 +86,7 @@ router.route('/mediabuyers/:mediabuyer_id')
 		//Find the mediabuyer we want
 		Mediabuyer.findById(req.params.mediabuyer_id, function(err, mediabuyer) {
 
+			//ensure mediabuyer id is valid
 			if (err){
 				console.log('error getting mediabuyer -- invalid id');
 				res.send(err);
@@ -92,6 +97,8 @@ router.route('/mediabuyers/:mediabuyer_id')
 
 				//save the Mediabuyer
 				mediabuyer.save(function(err) {
+
+					//ensure parameters are valid
 					if (err){
 						res.send(err);
 					} else {
@@ -114,6 +121,8 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns')
 
 		//populate the campaigns attribute of our mediabuyer object using the campaigns collection
 		Mediabuyer.findById(req.params.mediabuyer_id).populate('campaigns').exec(function(err, mediabuyer){
+
+			//ensure mediabuyer id is valid
 			if(err){
 				console.log('error getting mediabuyer -- invalid id');
 				res.send(err);
@@ -134,6 +143,7 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns')
 
 		Mediabuyer.findById(req.params.mediabuyer_id, function(err, mediabuyer) {
 
+			//ensure mediabuyer id is valid
 			if (err){
 				console.log('error getting mediabuyer -- invalid id');
 				res.send(err);
@@ -148,6 +158,7 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns')
 				//validate your campaign
 				campaign.save(function(err){
 
+					//ensure campaign parameters are valid
 					if(err){
 						res.send(err);
 					}
@@ -162,7 +173,8 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns')
 							res.json({message: 'You have added a campaign to this mediabuyer'});
 
 						});
-					}
+
+					} //close campaign parameter error check
 
 				});
 
@@ -187,7 +199,7 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id')
 
 		}).exec(function(err, mediabuyer){
 
-			//ensure a valid entity exists
+			//ensure a mediabuyer entity exists
 			if(err){
 				res.send(err);
 				console.log("error -- invalid campaign or mediabuyer id");
@@ -195,11 +207,14 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id')
 
 				var campaign = mediabuyer.campaigns[0];
 
+				//ensure campaign has been created
 				if(campaign == undefined){
 					console.log('ERROR');
 					res.json({message: 'error -- invalid campaign id'});
 
 				} else{
+
+					//return campaign
 					res.json(campaign);
 				}
 
@@ -219,6 +234,8 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id')
 			match: {_id: req.params.campaign_id}
 
 		}).exec(function(err, mediabuyer){
+
+			//ensure mediabuyer exists
 			if(err){
 				console.log("invalid mediabuyer or campaign id");
 				res.send(err);
@@ -227,6 +244,7 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id')
 				//Grab single campaign object
 				campaign = mediabuyer.campaigns[0];
 
+				//ensure object is valid
 				if(campaign == undefined){
 					console.log('ERROR');
 					res.json({message: 'error -- invalid campaign id'});
@@ -238,8 +256,9 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id')
 					campaign.status = req.body.status;
 
 					//because mediabuyer has already pushed campaign, we only need to save the campaign in question!
-
 					campaign.save(function(err) {
+
+						//ensure valid parameters
 						if (err){
 							res.send(err);
 						} else{
@@ -260,7 +279,7 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id')
 	});
 
 
-
+//routes associated with ads belonging to a campaign
 router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads')
 
 	.get(function(req, res){
@@ -272,6 +291,7 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads')
 
 		}).exec(function(err, mediabuyer){
 
+			//ensure mediabuyer exists
 			if(err){
 				console.log("invalid mediabuyer or campaign id");
 				res.send(err);
@@ -279,13 +299,16 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads')
 
 				//return campaign with specific id
 				console.log('getting campaign with id ' + req.params.campaign_id);
-				//res.json(mediabuyer.campaigns.id(req.params.campaign_id));
+
+				//grab campaign object
 				campaign = mediabuyer.campaigns[0];
 
+				//ensure object exists
 				if(campaign == undefined){
 					console.log('ERROR');
 					res.json({message: 'error -- invalid campaign id'});
 				} else{
+					//return ads
 					console.log('returning all ads for campaign with id ' + req.params.campaign_id);
 					res.json(campaign.ads);
 				}				
