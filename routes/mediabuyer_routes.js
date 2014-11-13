@@ -65,7 +65,7 @@ router.route('/mediabuyers/:mediabuyer_id')
 	.get(function(req, res) {
 		Mediabuyer.findById(req.params.mediabuyer_id, function(err, mediabuyer) {
 			if (err){
-				console.log('error getting mediabuyer -- invalid id')
+				console.log('error getting mediabuyer -- invalid id');
 				res.send(err);
 			} else{
 				console.log('getting mediabuyer with id ' + req.params.mediabuyer_id);
@@ -82,21 +82,25 @@ router.route('/mediabuyers/:mediabuyer_id')
 		//Find the mediabuyer we want
 		Mediabuyer.findById(req.params.mediabuyer_id, function(err, mediabuyer) {
 
-			if (err)
+			if (err){
+				console.log('error getting mediabuyer -- invalid id');
 				res.send(err);
+			} else {
 
-			//editable traits
-			mediabuyer.name = req.body.name; 
+				//update mediabuyer attributes
+				mediabuyer.name = req.body.name; 
 
-			//save the Mediabuyer
-			mediabuyer.save(function(err) {
-				if (err){
-					res.send(err);
-				} else {
-					console.log('updating a specific mediabuyer');
-					res.json({message: 'Mediabuyer has been updated.'});
-				}
-			});
+				//save the Mediabuyer
+				mediabuyer.save(function(err) {
+					if (err){
+						res.send(err);
+					} else {
+						console.log('updating a specific mediabuyer');
+						res.json({message: 'Mediabuyer has been updated.'});
+					} // close mediabuyer SAVE error check
+				});
+
+			} // close mediabuyer GET error check
 
 		});
 	});
@@ -110,11 +114,16 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns')
 
 		//populate the campaigns attribute of our mediabuyer object using the campaigns collection
 		Mediabuyer.findById(req.params.mediabuyer_id).populate('campaigns').exec(function(err, mediabuyer){
-			if(err)
+			if(err){
+				console.log('error getting mediabuyer -- invalid id');
 				res.send(err);
-			//return an array of populated campaigns
-			console.log('getting all campaigns belonging to mediabuyer ' + req.params.mediabuyer_id);
-			res.json(mediabuyer.campaigns);
+
+			} else{
+				//return an array of populated campaigns
+				console.log('getting all campaigns belonging to mediabuyer ' + req.params.mediabuyer_id);
+				res.json(mediabuyer.campaigns);
+			} 
+			
 		});
 	})
 
@@ -125,56 +134,39 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns')
 
 		Mediabuyer.findById(req.params.mediabuyer_id, function(err, mediabuyer) {
 
-			if (err)
+			if (err){
+				console.log('error getting mediabuyer -- invalid id');
 				res.send(err);
+			} else{
 
-			//create a new campaign
-			var campaign = new Campaign();
-			campaign.name = req.body.name;
-			campaign.type = req.body.type;
-			campaign.budget = req.body.budget;
+				//create a new campaign
+				var campaign = new Campaign();
+				campaign.name = req.body.name;
+				campaign.type = req.body.type;
+				campaign.budget = req.body.budget;
 
-			//validate your campaign
-			campaign.save(function(err){
+				//validate your campaign
+				campaign.save(function(err){
 
-				if(err){
-					res.send(err);
-				}
-				else{
-					//if campaign has been validated push it to mediabuyer
-					mediabuyer.campaigns.push(campaign);
+					if(err){
+						res.send(err);
+					}
+					else{
+						//if campaign has been validated push it to mediabuyer
+						mediabuyer.campaigns.push(campaign);
 
-					//save mediabuyer object
-					mediabuyer.save(function(err){
-						if(err)
-							res.send(err);
-						res.json({message: 'You have added a campaign to this mediabuyer'});
+						//save mediabuyer object
+						mediabuyer.save(function(err){
+							if(err)
+								res.send(err);
+							res.json({message: 'You have added a campaign to this mediabuyer'});
 
-					});
-				}
+						});
+					}
 
-			});
+				});
 
-			//DEPRECIATED - BUG: ADDED DEAD CAMPAIGNS TO MEDIABUYER OBJECT WASTING SPACE IN DATABASE
-			//DID NOT POPULATE DEAD CAMPAIGNS, BUG WAS NOT FATAL
-
-			// //save our mediabuyer
-			// mediabuyer.save(function(err) {
-			// 	if (err)
-			// 		res.send(err);
-
-			// 	//save our cmapaign
-			// 	campaign.save(function(err){
-			// 		if (err)
-			// 			res.send(err);
-			// 		//push our campaign
-			// 		mediabuyer.campaigns.push(campaign);
-			// 		console.log('saving new campaign');
-			// 	});
-
-			// 	console.log('adding a new campaign to mediabuyer');
-			// 	res.json({ message: 'You have added a campaign to this mediabuyer.' });
-			// });
+			} //close mediabuyer GET error check
 
 		});
 
@@ -195,31 +187,24 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id')
 
 		}).exec(function(err, mediabuyer){
 
-			var campaign = mediabuyer.campaigns[0];
+			//ensure a valid entity exists
 			if(err){
 				res.send(err);
-				console.log("Not a valid campaign id");
-			} else if(campaign == undefined){
-				console.log('ERROR');
-				res.json({message: 'error: invalid campaign id'});
-
+				console.log("error -- invalid campaign or mediabuyer id");
 			} else{
-				res.json(campaign);
-			}
-			// if(err){
-			// 	res.send(err);
-			// 	console.log("Not a valid campaign id");
-			// } else {
 
-			// 	//return campaign with specific id
-			// 	console.log('getting campaign with id ' + req.params.campaign_id);
+				var campaign = mediabuyer.campaigns[0];
 
-			// 	//because populate returns an array, we mucst return the single campaign object within that array
-			// 	//res.json(mediabuyer.campaigns.id(req.params.campaign_id));
-			// 	campaign = mediabuyer.campaigns[0];
-			// 	res.json(campaign);
+				if(campaign == undefined){
+					console.log('ERROR');
+					res.json({message: 'error -- invalid campaign id'});
 
-			// }
+				} else{
+					res.json(campaign);
+				}
+
+
+			} 
 			
 		});
 	})
@@ -234,34 +219,46 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id')
 			match: {_id: req.params.campaign_id}
 
 		}).exec(function(err, mediabuyer){
-			if(err)
+			if(err){
+				console.log("invalid mediabuyer or campaign id");
 				res.send(err);
+			} else{
 
-			//Grab single campaign object
-			campaign = mediabuyer.campaigns[0];
+				//Grab single campaign object
+				campaign = mediabuyer.campaigns[0];
 
-			//TYPE IS NOT EDITABLE -- MAKE NOTE IN API
-			campaign.name = req.body.name; 	
-			campaign.budget = req.body.budget;
-			campaign.status = req.body.status;
-
-			//because mediabuyer has already pushed campaign, we only need to save the campaign in question!
-
-			campaign.save(function(err) {
-				if (err){
-					res.send(err);
+				if(campaign == undefined){
+					console.log('ERROR');
+					res.json({message: 'error -- invalid campaign id'});
 				} else{
 
-					console.log('updating a specific campaign');
-					res.json({message: 'Campaign has been updated.'});
+					//TYPE IS NOT EDITABLE -- MAKE NOTE IN API
+					campaign.name = req.body.name; 	
+					campaign.budget = req.body.budget;
+					campaign.status = req.body.status;
+
+					//because mediabuyer has already pushed campaign, we only need to save the campaign in question!
+
+					campaign.save(function(err) {
+						if (err){
+							res.send(err);
+						} else{
+
+							console.log('updating a specific campaign');
+							res.json({message: 'Campaign has been updated.'});
+
+						}
+						
+					});
 
 				}
-				
-			});
+
+			}
 
 		});
 
 	});
+
 
 
 router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads')
@@ -275,16 +272,29 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads')
 
 		}).exec(function(err, mediabuyer){
 
-			if(err)
+			if(err){
+				console.log("invalid mediabuyer or campaign id");
 				res.send(err);
-			//return campaign with specific id
-			console.log('getting campaign with id ' + req.params.campaign_id);
-			//res.json(mediabuyer.campaigns.id(req.params.campaign_id));
-			campaign = mediabuyer.campaigns[0];
-			//campaign = mediabuyer.campaigns.findById(req.params.campaign_id);
-			res.json(campaign.ads);
+			} else{
+
+				//return campaign with specific id
+				console.log('getting campaign with id ' + req.params.campaign_id);
+				//res.json(mediabuyer.campaigns.id(req.params.campaign_id));
+				campaign = mediabuyer.campaigns[0];
+
+				if(campaign == undefined){
+					console.log('ERROR');
+					res.json({message: 'error -- invalid campaign id'});
+				} else{
+					console.log('returning all ads for campaign with id ' + req.params.campaign_id);
+					res.json(campaign.ads);
+				}				
+
+			}
+			
 		});
 	})
+
 
 	.post(function(req, res){
 
@@ -296,49 +306,66 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads')
 
 		}).exec(function(err, mediabuyer){
 
-			if(err)
+			if(err){
+				console.log("invalid mediabuyer or campaign id");
 				res.send(err);
+			} else{
 
-			//find campaign
-			campaign = mediabuyer.campaigns[0];
+				//find campaign
+				campaign = mediabuyer.campaigns[0];
 
-			//create a new ad
-			var ad = new Ad();
-			ad.type = req.body.type;
+				//make sure campaign exists
+				if(campaign == undefined){
+					console.log('error -- undefined campaign');
+					res.json({message: 'error -- invalid campaign id'});
+				} else{
 
-			//set bidding values
-			//DEFAULT BID AMOUNT IS 5 -- NOTE IN API DOCS
-			ad.bid.bidtype = req.body.bidtype;
-			ad.bid.amount = req.body.amount;
+					//create a new ad
+					var ad = new Ad();
+					ad.type = req.body.type;
 
-			//set targeting spec
-			ad.target.venue_name = req.body.venue_name;
-			ad.target.venue_city = req.body.venue_city;
-			ad.target.venue_street = req.body.venue_street;
-			ad.target.venue_zip = req.body.venue_zip;
-			ad.target.microlocation_descriptor_tag = req.body.microlocation_descriptor_tag;
-			ad.target.microlocation_action_tag = req.body.microlocation_action_tag;
-			ad.target.microlocation_price_tag = req.body.microlocation_price_tag;
+					//set bidding values
+					//DEFAULT BID AMOUNT IS 5 -- NOTE IN API DOCS
+					ad.bid.bidtype = req.body.bidtype;
+					ad.bid.amount = req.body.amount;
 
-			//push our ad
-			campaign.ads.push(ad);
+					//set targeting spec
+					ad.target.venue_name = req.body.venue_name;
+					ad.target.venue_city = req.body.venue_city;
+					ad.target.venue_street = req.body.venue_street;
+					ad.target.venue_zip = req.body.venue_zip;
+					ad.target.microlocation_descriptor_tag = req.body.microlocation_descriptor_tag;
+					ad.target.microlocation_action_tag = req.body.microlocation_action_tag;
+					ad.target.microlocation_price_tag = req.body.microlocation_price_tag;
 
-			//because mediabuyer has already pushed campaign, we only need to save the campaign in question!
+					//push our ad
+					campaign.ads.push(ad);
 
-			campaign.save(function(err) {
-				if (err){
-					res.send(err);
-					console.log('error creating ad');
-				} else {
+					//because mediabuyer has already pushed campaign, we only need to save the campaign in question!
 
-					console.log('adding a new ad to this campaign');
-					res.json({message: 'Added a new ad to this campaign.'});
+					campaign.save(function(err) {
+						if (err){
+							res.send(err);
+							console.log('error creating ad');
+						} else {
+
+							console.log('adding a new ad to this campaign');
+							res.json({message: 'Added a new ad to this campaign.'});
+						}
+						
+					});
+
+
 				}
-				
-			});
 
+			}
+
+			
 		});
 	});
+
+
+
 
 router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads/:ad_id')
 
@@ -355,24 +382,31 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads/:ad_id')
 			//THIS IF IS NOT NEEDED AS THE POPULATION ONLY PERTAINS TO CAMPAIGNS
 			if(err){
 				res.send(err);
-				console.log("Not a valid ad id");
+				console.log("Not a valid mediabuyer, campaign, or ad id");
 			} else {
 
 				//store our campaign
 				campaign = mediabuyer.campaigns[0];
+				if (campaign == undefined){
+					console.log('error -- undefined campaign');
+					res.json({message: 'error -- invalid campaign id'});
+				} else{
 
-				//return campaign with specific id
-				console.log('getting ad with id ' + req.params.ad_id);
-				res.json(campaign.ads.id(req.params.ad_id));
+					//WORTH ADDING AN ERROR CHECK FOR AN AD HERE?
 
+					//return campaign with specific id
+					console.log('getting ad with id ' + req.params.ad_id);
+					res.json(campaign.ads.id(req.params.ad_id));
+
+				}
 
 			}
-			
-			
+				
 		});
 	})
 
-	.put(function(req, res){
+
+.put(function(req, res){
 
 		//Find desired mediabuyer, populating only campaign with id :campaign_id
 		Mediabuyer.findById(req.params.mediabuyer_id).populate({
@@ -381,45 +415,72 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads/:ad_id')
 			match: {_id: req.params.campaign_id}
 
 		}).exec(function(err, mediabuyer){
-			if(err)
+			
+			if(err){
 				res.send(err);
+				console.log("Not a valid mediabuyer, campaign, or ad id");
+			} else{
 
-			//grab our campaign
-			campaign = mediabuyer.campaigns[0];
+				//grab our campaign
+				campaign = mediabuyer.campaigns[0];
 
-			ad = campaign.ads.id(req.params.ad_id);
+				//check campaign validity
+				if(campaign == undefined){
+					console.log('error -- undefined campaign');
+					res.json({message: 'error -- invalid campaign id'});
+				} else{
 
-			//change your ad status if desired
-			ad.status = req.body.status;
-			//set bidding values
-			ad.bid.bidtype = req.body.bidtype;
-			ad.bid.amount = req.body.amount;
-			//set targeting spec
-			ad.target.venue_name = req.body.venue_name;
-			ad.target.venue_city = req.body.venue_city;
-			ad.target.venue_street = req.body.venue_street;
-			ad.target.venue_zip = req.body.venue_zip;
-			ad.target.microlocation_descriptor_tag = req.body.microlocation_descriptor_tag;
-			ad.target.microlocation_action_tag = req.body.microlocation_action_tag;
-			ad.target.microlocation_price_tag = req.body.microlocation_price_tag;
+					ad = campaign.ads.id(req.params.ad_id);
 
-			//save campaign object
-			campaign.save(function(err){
+					//check ad validity
+					if(ad == undefined){
+						console.log('error -- undefined ad');
+						res.json({message: 'error -- invalid ad id'});
+					} else{
 
-				if (err) {
-					res.send(err);
-					console.log('error updating ad');
+						//change your ad status if desired
+						ad.status = req.body.status;
+						//set bidding values
+						ad.bid.bidtype = req.body.bidtype;
+						ad.bid.amount = req.body.amount;
+						//set targeting spec
+						ad.target.venue_name = req.body.venue_name;
+						ad.target.venue_city = req.body.venue_city;
+						ad.target.venue_street = req.body.venue_street;
+						ad.target.venue_zip = req.body.venue_zip;
+						ad.target.microlocation_descriptor_tag = req.body.microlocation_descriptor_tag;
+						ad.target.microlocation_action_tag = req.body.microlocation_action_tag;
+						ad.target.microlocation_price_tag = req.body.microlocation_price_tag;
+
+						//save campaign object
+						campaign.save(function(err){
+
+							if (err) {
+								res.send(err);
+								console.log('error updating ad');
+							}
+							else {
+								console.log('updating advertisement');
+								res.json({message: "Ad has been updated"});
+							}
+							
+						});
+
+
+					}
+
+					
+
+
 				}
-				else {
-					console.log('updating advertisement');
-					res.json({message: "Ad has been updated"});
-				}
+
 				
-			});
+
+			}
+
 		});
 
 	});
-
 
 
 
