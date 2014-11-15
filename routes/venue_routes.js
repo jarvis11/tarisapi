@@ -1,3 +1,19 @@
+/*===============================================================================================================
+
+Venue routes allow you to register venues, which are physical locations
+Venues can have multiple addresses, with each address having a set of microlocations
+Microlocations are registered BLE devices and their associated targeting tags
+All objects are directly embedded within one another, meaning no population is required here
+
+Embedded structure is as follows:
+Venue ==> Address ==> Microlocation
+
+=================================================================================================================*/
+
+
+
+
+
 //initialize Express router
 var express = require('express');
 var router = express.Router();
@@ -14,32 +30,44 @@ var Microlocation = require('../models/venue_document/microlocation');
 // 	next(); // make sure we go to the next routes and don't stop here
 // });
 
+
+
+
+
 /*=============================================================================================
 
 ROUTES GO HERE
 
+All routes are accessed at: http://hosturl/api/...
+
 =============================================================================================*/
 
-//high level venue routes (GET, POST)
+
+/*========================================================================
+
+Query a collection of venues (GET)
+Create a new venue document (POST)
+
+==========================================================================*/
+
 router.route('/venues')
 
-	//get all Venues with their respective Addresses and Microlocations
-	//Accessed at: GET http://localhost:8080/api/venues
 	.get(function(req, res){
 
 		//find all venue documents
 		Venue.find(function(err, venues){
-			if(err)
+			if(err){
+				console.log('error getting venues');
 				res.send(err);
-			console.log('getting all venues');
-			
-			//return all venue documents
-			res.json(venues);
+			} else{
+
+				//return array of all venue documents
+				console.log('getting all venues');
+				res.json(venues);
+			}	
 		});
 	})
 
-	//Register a venue with Taris
-	//Accessed at: POST http://localhost:8080/api/venues)
 	.post(function(req,res){
 
 		//create a new venue document
@@ -59,21 +87,26 @@ router.route('/venues')
 				console.log('adding a new venue');
 				res.json({message: 'You have registered a venue!'});
 			} //close venue GET error check
-			
 		});
 	});
 
-//specific venue routes (GET, PUT)
-router.route('/venues/:venue_id')
 
-	//Get a venue with specific venue_id :venue_id
-	//Accessed at: GET http://localhost:8080/api/venues/:venue_id
+
+/*========================================================================
+
+Query a specific venue document (GET)
+Update a venue document (PUT)
+
+==========================================================================*/
+
+router.route('/venues/:venue_id')
+	
 	.get(function(req, res) {
 
-		//find venue by id
+		//find venue with id :venue_id
 		Venue.findById(req.params.venue_id, function(err, venue) {
 
-			//ensure venue id is valid
+			//ensure :venue_id is valid
 			if (err){
 				res.send(err);
 				console.log('error getting venue -- invalid id');
@@ -82,13 +115,10 @@ router.route('/venues/:venue_id')
 				//return venue
 				console.log('getting venue with id: ' + req.params.venue_id);
 				res.json(venue);
-			} // close venue GET error check
-			
+			} // close venue GET error check			
 		});
 	})
 
-	//Update a venue's credentials
-	//Accessed at: PUT http://localhost:8080/api/venues/:venue_id
 	.put(function(req, res) {
 
 		//find venue by id
@@ -103,7 +133,7 @@ router.route('/venues/:venue_id')
 				//update venue attributes
 				venue.name = req.body.name; 	
 
-				//save the Venue
+				//save the Venue document
 				venue.save(function(err) {
 
 					//ensure updated attributes are valid
@@ -121,12 +151,15 @@ router.route('/venues/:venue_id')
 	});
 
 
-	
+/*========================================================================
+
+Query all addresses embedded within a venue document (GET)
+Embed a new address within a venue document (POST)
+
+==========================================================================*/
 
 router.route('/venues/:venue_id/addresses')	
 	
-	//Find all addresses for a single venue
-	//Accessed at: GET http://localhost:8080/api/venues/:venue_id/addresses
 	.get(function(req, res) {
 
 		//find venue by id
@@ -147,9 +180,6 @@ router.route('/venues/:venue_id/addresses')
 	})
 
 
-
-	//Add an address for a venue
-	//Accessed at: POST http://localhost:8080/api/venues/:venue_id/addresses
 	.post(function(req, res) {
 
 		//find venue by id
@@ -183,17 +213,24 @@ router.route('/venues/:venue_id/addresses')
 						res.json({ message: 'You have added an address to this venue.' });
 					} // close venue SAVE error check
 				});
-
 			} // close venue GET error check
-
 		});
-
 	});
 
 
+
+
+
+/*========================================================================
+
+Query a single address embedded within a venue document (GET)
+Update a specific address embedded within a venue (PUT)
+
+==========================================================================*/
+
 router.route('/venues/:venue_id/addresses/:address_id')
-	//Find a specific address belonging to a specific venue
-	//Accessed at: GET http://localhost:8080/api/venues/:venue_id/addresses/:address_id
+	
+
 	.get(function(req, res) {
 
 		//find venue by id
@@ -225,8 +262,6 @@ router.route('/venues/:venue_id/addresses/:address_id')
 
 	})
 
-	//Update an address
-	//Accessed at: PUT http://localhost:8080/api/venues/:venue_id/addresses/:address_id
 	//ISSUE: RIGHT NOW NEED TO UPDATE THE ENTIRE ADDRESS. CANNOT JUST UPDATE SIGNAL ENTITIES. NEED TO FIX THIS.
 	.put(function(req, res){
 
@@ -275,11 +310,17 @@ router.route('/venues/:venue_id/addresses/:address_id')
 	});
 
 
+/*========================================================================
+
+Query all microlocations embedded within an address (GET)
+Create a new microlocation and embed within an existing address (POST)
+
+==========================================================================*/
+
+///DONE UP TILL HERE
 
 router.route('/venues/:venue_id/addresses/:address_id/microlocations')
 	
-	//Get all microlocations within embedded within an address
-	//Accessed at: GET http://localhost:8080/api/venues/:venue_id/addresses/:address_id/microlocations
 	.get(function(req, res){
 
 		//find venue by id
@@ -313,8 +354,6 @@ router.route('/venues/:venue_id/addresses/:address_id/microlocations')
 	})
 
 
-	//Assign a new microlocation to an address
-	//Accessed at: POST http://localhost:8080/api/venues/:venue_id/addresses/:address_id/microlocations
 	.post(function(req,res){
 
 		//find venue by id
@@ -367,10 +406,17 @@ router.route('/venues/:venue_id/addresses/:address_id/microlocations')
 		});
 	});
 
+
+/*========================================================================
+
+Query a specific microlocation belonging to an address (GET)
+Update a specific microlocation (PUT)
+
+==========================================================================*/
+
+
 router.route('/venues/:venue_id/addresses/:address_id/microlocations/:microlocation_id')
 
-	//Get a single microlocation embedded within an address
-	//Accessed at: GET http://localhost:8080/api/venues/:venue_id/addresses/:address_id/microlocations/:microlocation_id
 	.get(function(req, res){
 
 		//Find venue
@@ -408,8 +454,6 @@ router.route('/venues/:venue_id/addresses/:address_id/microlocations/:microlocat
 		});
 	})
 
-	//Update an microlocation
-	//Accessed at: PUT http://localhost:8080/api/venues/:venue_id/addresses/:address_id/microlocations/:microlocation_id
 	//ISSUE: RIGHT NOW NEED TO UPDATE THE ENTIRE MICROLOCATION. CANNOT JUST UPDATE SIGNAL ENTITIES. NEED TO FIX THIS.
 	.put(function(req, res){
 
