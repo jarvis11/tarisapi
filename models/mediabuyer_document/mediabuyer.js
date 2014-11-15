@@ -1,3 +1,21 @@
+/*=============================================================================================
+
+A mediabuyer is the actual organization intending to leverage BLE targeting tech to display ads
+on users mobile devices.
+
+Mediabuyers can create campaigns, and advertisements. All campaigns are actually referenced entities, not
+directly embedded within the mediabuyer's document. This is done for storage efficiency, and keeps 
+a single document from growing too large over time.
+
+Mediabuyer attributes:
+
+name => name of media buyer
+
+campaigns => referenced campaigns created by mediabuyer, stored in a seperate campaigns collection.
+
+=============================================================================================*/
+
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var CampaignSchema = require('../campaign_document/campaign');
