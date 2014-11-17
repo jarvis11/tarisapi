@@ -317,8 +317,6 @@ Create a new microlocation and embed within an existing address (POST)
 
 ==========================================================================*/
 
-///DONE UP TILL HERE
-
 router.route('/venues/:venue_id/addresses/:address_id/microlocations')
 	
 	.get(function(req, res){
