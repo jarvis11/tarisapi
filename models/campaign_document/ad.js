@@ -61,6 +61,18 @@ var AdSchema = new Schema({
 		microlocation_action_tag: [String],
 		microlocation_price_tag: [String]
 	}
+
+	//embed creative here 
+	//for exmaple:
+	/*
+		creative:{
+			title: String,
+			description: String
+
+		}
+
+	*/
+	//Any sort of rich media can be added to this creative (image, video, audio) depending on developer's desires
 	
 	
 });

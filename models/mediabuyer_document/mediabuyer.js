@@ -9,9 +9,9 @@ a single document from growing too large over time.
 
 Mediabuyer attributes:
 
-name => name of media buyer
+Name => name of media buyer
 
-campaigns => referenced campaigns created by mediabuyer, stored in a seperate campaigns collection.
+Campaigns => referenced campaigns created by mediabuyer, stored in a seperate campaigns collection.
 
 =============================================================================================*/
 

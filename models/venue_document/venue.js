@@ -1,7 +1,7 @@
 /*=============================================================================================
 
-Venues are high level objects that group the physical locations that house BLE devices. Venue's 
-are intended to represent corporations that intend to link their physical locations with BLE tech. 
+Venues are high level objects that group the physical locations that house BLE devices. Venues
+represent the corporations that intend to link their physical locations with BLE tech. 
 Each venue embeds multiple addresses to accomodate larger chains and franchises. 
 
 Venue attributes:

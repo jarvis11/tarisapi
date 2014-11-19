@@ -1,7 +1,7 @@
 /*===============================================================================================================
 
 Mediabuyer routes allow you to manipulate medaibuyer objects
-Mediabuyer objects own campiagn, and subsequently ad objects
+Mediabuyer objects own campiagn, and subsequently ad, objects
 Mediabuyer objects are stored in their own collection, referencing seperate collections of campaigns
 and ads for efficiency.
 
@@ -409,6 +409,15 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads')
 					ad.target.microlocation_action_tag = req.body.microlocation_action_tag;
 					ad.target.microlocation_price_tag = req.body.microlocation_price_tag;
 
+					/*
+
+						Add creative attributes here, otherwise your ad will not have anything to display!
+
+						ad.creative.title = req.body.title;
+						ad.creative.description = req.body.description;
+					*/
+
+
 					//push our ad
 					campaign.ads.push(ad);
 
@@ -535,6 +544,15 @@ router.route('/mediabuyers/:mediabuyer_id/campaigns/:campaign_id/ads/:ad_id')
 						ad.target.microlocation_descriptor_tag = req.body.microlocation_descriptor_tag;
 						ad.target.microlocation_action_tag = req.body.microlocation_action_tag;
 						ad.target.microlocation_price_tag = req.body.microlocation_price_tag;
+
+						/*
+
+							Add creative attributes here for updating.
+
+							ad.creative.title = req.body.title;
+							ad.creative.description = req.body.description;
+						*/
+
 
 						//save campaign object
 						campaign.save(function(err){
